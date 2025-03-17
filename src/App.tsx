@@ -4,13 +4,25 @@ import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
 import type { User } from '@supabase/supabase-js';
 
+interface VideoClip {
+  id: string;
+  video_id: string;
+  title: string;
+  start_time: number;
+  end_time: number;
+  scene_type: 'intro' | 'main' | 'outro';
+  url: string;
+}
+
 interface VideoItem {
   id: string;
   youtube_url: string;
+  title: string | null;
   script: string | null;
-  created_at: string;
   status: 'pending' | 'processing' | 'completed' | 'error';
   progress?: number;
+  clips?: VideoClip[];
+  created_at: string;
 }
 
 function App() {
@@ -62,8 +74,8 @@ function App() {
             throw new Error('No access token available');
           }
 
-          // Updated URL to match the deployed Edge Function name
-          const response = await fetch('https://dtukxtdcvstsxznnooam.supabase.co/functions/v1/youtube-video-script-processor', {
+          // Updated URL to match the deployed Edge Function name (yes, really)
+          const response = await fetch('/api/youtube-video-script-processor', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${session.access_token}`,
@@ -99,7 +111,7 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-    const progressIntervals: { [key: string]: number } = {};
+    const progressIntervals: { [key: string]: ReturnType<typeof setInterval> } = {};
 
     videos.forEach(video => {
       if (video.status === 'pending' && !video.progress) {
@@ -127,23 +139,39 @@ function App() {
 
   const fetchVideos = async () => {
     try {
-      const { data, error: fetchError } = await supabase
+      // first get videos
+      const { data: videos, error: videosError } = await supabase
         .from('videos')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (fetchError) throw fetchError;
-      setVideos(data?.map(video => ({
-        ...video,
-        progress: video.status === 'pending' ? 0 : undefined
-      })) || []);
+      if (videosError) throw videosError;
+
+      // then get clips for each video
+      const videosWithClips = await Promise.all(
+        (videos || []).map(async (video) => {
+          const { data: clips } = await supabase
+            .from('video_clips')
+            .select('*')
+            .eq('video_id', video.id)
+            .order('start_time');
+
+          return {
+            ...video,
+            clips: clips || []
+          };
+        })
+      );
+
+      setVideos(videosWithClips);
     } catch (err) {
       console.error('Error fetching videos:', err);
     }
   };
 
   const validateYouTubeUrl = (url: string) => {
-    const shortsPattern = /^https:\/\/(www\.)?youtube\.com\/shorts\/[a-zA-Z0-9_-]+$/;
+    // proper regex that handles all youtube short formats including mobile
+    const shortsPattern = /^https?:\/\/(?:(?:www|m)\.)?(?:youtube\.com\/shorts\/|youtu\.be\/shorts\/)([a-zA-Z0-9_-]+)(?:[/?].*)?$/i;
     return shortsPattern.test(url);
   };
 
@@ -185,6 +213,10 @@ function App() {
     } catch (err: any) {
       console.error('Error generating video:', err);
       setError(err.message || 'Failed to generate video. Please try again.');
+      // Reset the video status if insertion failed
+      if (err.message.includes('row-level security')) {
+        setError('Permission denied. Please try again or contact support.');
+      }
     } finally {
       setLoading(false);
     }
@@ -363,12 +395,44 @@ function App() {
                           )}
                         </div>
                       </div>
-                      {expandedVideo === video.id && video.script && (
+                      {expandedVideo === video.id && (
                         <div className="p-4 bg-neutral-50 border-t border-neutral-200">
-                          <h3 className="text-sm font-medium mb-2">Generated Script</h3>
-                          <pre className="text-sm text-neutral-600 whitespace-pre-wrap font-mono bg-white p-4 border border-neutral-200">
-                            {video.script}
-                          </pre>
+                          {video.clips && video.clips.length > 0 && (
+                            <div className="mb-8">
+                              <h3 className="text-sm font-medium mb-4">Video Clips</h3>
+                              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                {video.clips.map((clip) => (
+                                  <div key={clip.id} className="space-y-2">
+                                    <div className="relative pt-[56.25%] bg-neutral-100">
+                                      <video 
+                                        src={clip.url}
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                        controls
+                                        preload="metadata"
+                                      />
+                                    </div>
+                                    <div className="text-center">
+                                      <p className="font-medium">{clip.title}</p>
+                                      <p className="text-sm text-neutral-500">
+                                        {clip.scene_type} • {clip.end_time - clip.start_time}s
+                                      </p>
+                                      <p className="text-xs text-neutral-400">
+                                        {clip.start_time}s - {clip.end_time}s
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {video.script && (
+                            <div>
+                              <h3 className="text-sm font-medium mb-2">Generated Script</h3>
+                              <pre className="text-sm text-neutral-600 whitespace-pre-wrap font-mono bg-white p-4 border border-neutral-200 rounded-none">
+                                {video.script}
+                              </pre>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
