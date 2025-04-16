@@ -11,7 +11,7 @@ export function Auth() {
   const [success, setSuccess] = useState('');
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const trimmedEmail = email.trim();
     
     if (!trimmedEmail) {
@@ -73,13 +73,8 @@ export function Auth() {
         
         if (signUpError) throw signUpError;
 
-        // Try to sign in immediately after signup since email confirmation is disabled
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: normalizedEmail,
-          password
-        });
-
-        if (signInError) throw signInError;
+        setSuccess('Check your email for confirmation link!');
+        setIsSignUp(false);
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ 
           email: normalizedEmail,
@@ -92,8 +87,7 @@ export function Auth() {
       let errorMessage = 'An error occurred. Please try again.';
       
       if (err.message?.toLowerCase().includes('email not confirmed')) {
-        errorMessage = 'Please try signing in again.';
-        setIsSignUp(false);
+        errorMessage = 'Please check your email for the confirmation link.';
       } else if (err.message?.toLowerCase().includes('email')) {
         errorMessage = 'Please enter a valid email address';
       } else if (err.message?.toLowerCase().includes('password')) {
@@ -194,7 +188,7 @@ export function Auth() {
                   autoComplete="email"
                   placeholder="you@example.com"
                   maxLength={254}
-                  pattern="[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*"
+                  pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
                 />
               </div>
               <div className="space-y-2">
