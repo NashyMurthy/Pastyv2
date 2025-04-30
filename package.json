@@ -12,10 +12,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "@bull-board/api": "^6.7.10",
+    "@headlessui/react": "^2.2.2",
     "@supabase/supabase-js": "^2.39.7",
     "@types/node": "^22.13.10",
     "@vercel/node": "^5.1.14",
     "bull": "^4.16.5",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "ffmpeg-static": "^5.2.0",
@@ -23,6 +25,7 @@
     "next": "^15.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.2.0",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
