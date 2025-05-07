@@ -24,8 +24,10 @@ export function LandingPage({ onStart }: LandingPageProps) {
   } | null>(null);
 
   const handleGetStarted = () => {
-    setShowAuth(true);
-  };
+  onStart();         // ✅ notifies App to show Auth
+  setShowAuth(true); // optional: still shows Auth directly from LandingPage
+};
+
 
   const handleSelectPlan = (plan: { name: string; price: string; billingPeriod: string }) => {
     setSelectedPlan(plan);
