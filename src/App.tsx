@@ -35,6 +35,8 @@ function App() {
   const [success, setSuccess] = useState('');
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+  const [hasClickedGetStarted, setHasClickedGetStarted] = useState(false);
+
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -257,9 +259,14 @@ function App() {
     setExpandedVideo(expandedVideo === videoId ? null : videoId);
   };
 
-  if (!user) {
-    return <LandingPage />;
-  }
+  if (!user && !hasClickedGetStarted) {
+  return <LandingPage onStart={() => setHasClickedGetStarted(true)} />;
+}
+
+if (!user && hasClickedGetStarted) {
+  return <Auth />;
+}
+
 
   return (
     <div className="min-h-screen bg-white text-neutral-900">
