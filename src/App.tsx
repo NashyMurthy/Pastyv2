@@ -99,7 +99,7 @@ function App() {
             throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
           }
           
-          const data = await response.json();
+          await response.json();
           if (data.video) {
             await fetchVideos();
           }
