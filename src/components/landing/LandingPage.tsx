@@ -9,7 +9,12 @@ import FAQSection from './FAQSection';
 import Footer from './Footer';
 import { Auth } from '../Auth';
 
-export function LandingPage() {
+interface LandingPageProps {
+  onStart: () => void;
+}
+
+export function LandingPage({ onStart }: LandingPageProps) {
+
   const [showAuth, setShowAuth] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{
     name: string;
