@@ -36,16 +36,21 @@ function App() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
   const [hasClickedGetStarted, setHasClickedGetStarted] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
 
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
+      setAuthChecked(true);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+ const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+  setUser(session?.user ?? null);
+  setAuthChecked(true); // ✅ This is the fix
+});
+
 
     return () => subscription.unsubscribe();
   }, []);
@@ -259,13 +264,18 @@ function App() {
     setExpandedVideo(expandedVideo === videoId ? null : videoId);
   };
 
-  if (!user && !hasClickedGetStarted) {
+if (!authChecked) {
+  return null; // Optional: show a loading spinner if you want
+}
+
+if (!user && !hasClickedGetStarted) {
   return <LandingPage onStart={() => setHasClickedGetStarted(true)} />;
 }
 
 if (!user && hasClickedGetStarted) {
   return <Auth />;
 }
+
 
 
   return (
