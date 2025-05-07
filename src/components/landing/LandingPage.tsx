@@ -14,15 +14,11 @@ interface LandingPageProps {
 
 export function LandingPage({ onStart }: LandingPageProps) {
   const handleGetStarted = () => {
-    onStart(); // Notifies App to show <Auth />
+    onStart(); // Tell App to show Auth
   };
 
-  const handleSelectPlan = (plan: {
-    name: string;
-    price: string;
-    billingPeriod: string;
-  }) => {
-    onStart(); // You might also want to set selected plan in App if needed
+  const handleSelectPlan = (plan: { name: string; price: string; billingPeriod: string }) => {
+    onStart(); // Also trigger auth if user clicks a plan
   };
 
   return (
