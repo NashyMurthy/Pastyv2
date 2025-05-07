@@ -38,7 +38,7 @@ export function LandingPage({ onStart }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-white pt-16">
       <Header onGetStarted={handleGetStarted} />
-      <HeroSection onGetStarted={handleGetStarted} />
+      <HeroSection onGetStarted={onStart} />
       <HowItWorks />
       <FeaturesSection />
       <PricingSection onSelectPlan={handleSelectPlan} />
