@@ -14,17 +14,21 @@ interface LandingPageProps {
 
 export function LandingPage({ onStart }: LandingPageProps) {
   const handleGetStarted = () => {
-    onStart(); // ✅ trigger auth flow handled in App.tsx
+    onStart(); // Notifies App to show <Auth />
   };
 
-  const handleSelectPlan = (plan: { name: string; price: string; billingPeriod: string }) => {
-    onStart(); // ✅ same here
+  const handleSelectPlan = (plan: {
+    name: string;
+    price: string;
+    billingPeriod: string;
+  }) => {
+    onStart(); // You might also want to set selected plan in App if needed
   };
 
   return (
     <div className="min-h-screen bg-white pt-16">
       <Header onGetStarted={handleGetStarted} />
-      <HeroSection onGetStarted={onStart} />
+      <HeroSection onGetStarted={handleGetStarted} />
       <HowItWorks />
       <FeaturesSection />
       <PricingSection onSelectPlan={handleSelectPlan} />
