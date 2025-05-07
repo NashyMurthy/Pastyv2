@@ -99,10 +99,11 @@ function App() {
             throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
           }
           
-          await response.json();
-          if (data.video) {
-            await fetchVideos();
-          }
+         const data = await response.json();
+if (data.video) {
+  await fetchVideos();
+}
+
         } catch (err: any) {
           console.error('Error processing videos:', err.message);
           if (err.message.includes('Authentication failed')) {
