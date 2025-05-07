@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Header } from './Header';
 import HeroSection from './HeroSection';
 import HowItWorks from './HowItWorks';
@@ -7,36 +7,19 @@ import PricingSection from './PricingSection';
 import TestimonialsSection from './TestimonialsSection';
 import FAQSection from './FAQSection';
 import Footer from './Footer';
-import { Auth } from '../Auth';
 
 interface LandingPageProps {
   onStart: () => void;
 }
 
 export function LandingPage({ onStart }: LandingPageProps) {
-
-
-  const [showAuth, setShowAuth] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<{
-    name: string;
-    price: string;
-    billingPeriod: string;
-  } | null>(null);
-
   const handleGetStarted = () => {
-  onStart();         // ✅ notifies App to show Auth
-  setShowAuth(true); // optional: still shows Auth directly from LandingPage
-};
-
-
-  const handleSelectPlan = (plan: { name: string; price: string; billingPeriod: string }) => {
-    setSelectedPlan(plan);
-    setShowAuth(true);
+    onStart(); // ✅ trigger auth flow handled in App.tsx
   };
 
-  if (showAuth) {
-    return <Auth />;
-  }
+  const handleSelectPlan = (plan: { name: string; price: string; billingPeriod: string }) => {
+    onStart(); // ✅ same here
+  };
 
   return (
     <div className="min-h-screen bg-white pt-16">
@@ -50,4 +33,4 @@ export function LandingPage({ onStart }: LandingPageProps) {
       <Footer />
     </div>
   );
-} 
+}
