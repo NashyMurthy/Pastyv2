@@ -15,6 +15,7 @@ interface LandingPageProps {
 
 export function LandingPage({ onStart }: LandingPageProps) {
 
+
   const [showAuth, setShowAuth] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{
     name: string;
