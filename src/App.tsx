@@ -35,7 +35,9 @@ const [error, setError] = useState('');
 const [success, setSuccess] = useState('');
 const [videos, setVideos] = useState<VideoItem[]>([]);
 const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
-const [hasClickedGetStarted, setHasClickedGetStarted] = useState(false);
+const [hasClickedGetStarted, setHasClickedGetStarted] = useState(
+  localStorage.getItem('hasClickedGetStarted') === 'true' // Initialize from localStorage
+);
 const [authChecked, setAuthChecked] = useState(false);
 
 useEffect(() => {
@@ -256,6 +258,13 @@ const handleSignOut = () => {
 supabase.auth.signOut();
 };
 
+
+const onStart = () => {
+localStorage.setItem('hasClickedGetStarted', 'true'); // Save to localStorage
+setHasClickedGetStarted(true); // Update state
+};
+
+  
 const getStatusIcon = (status: VideoItem['status']) => {
 switch (status) {
 case 'completed':
@@ -295,7 +304,7 @@ if (!authChecked) {
 }
 
 if (!user && !hasClickedGetStarted) {
-  return <LandingPage onStart={() => setHasClickedGetStarted(true)} />;
+  return <LandingPage onStart={onStart} />; // Use the new function
 }
 
 if (!user && hasClickedGetStarted) {
