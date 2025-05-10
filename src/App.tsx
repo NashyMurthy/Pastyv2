@@ -287,15 +287,19 @@ setExpandedVideo(expandedVideo === videoId ? null : videoId);
 };
 
 if (!authChecked) {
-return null; // Optional: show a loading spinner if you want
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Loader2 className="w-8 h-8 animate-spin" />
+    </div>
+  );
 }
 
 if (!user && !hasClickedGetStarted) {
-return <LandingPage onStart={() => setHasClickedGetStarted(true)} />;
+  return <LandingPage onStart={() => setHasClickedGetStarted(true)} />;
 }
 
 if (!user && hasClickedGetStarted) {
-return <Auth />;
+  return <Auth />;
 }
 
 return (
