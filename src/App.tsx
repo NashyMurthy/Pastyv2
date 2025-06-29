@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Video, Wand2, FileVideo, ScrollText, LogOut, Loader2, CheckCircle2, Clock, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
-import { LandingPage } from './components/landing/LandingPage';
+import { LandingPage } from './pages/LandingPage';
 import type { User } from '@supabase/supabase-js';
 
 interface VideoClip {
@@ -58,6 +58,7 @@ return () => subscription.unsubscribe();
 
 }, []);
 
+
 useEffect(() => {
 if (user) {
 fetchVideos();
@@ -72,6 +73,26 @@ filter: `user_id=eq.${user.id}`
 fetchVideos();
 })
 .subscribe();
+
+return () => subscription.unsubscribe();
+}
+}, [user]);
+
+return (
+<Router>
+  <Routes>
+    {/* Landing Page as the default route */}
+    <Route path="/" element={<LandingPage />} />
+
+    {/* Authentication Page */}
+    <Route path="/auth" element={<Auth />} />
+
+    {/* Example: Add other routes here if needed */}
+    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+  </Routes>
+</Router>
+);
+}
 
 ```
   const processingInterval = setInterval(async () => {
