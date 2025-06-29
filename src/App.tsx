@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Video, Wand2, FileVideo, ScrollText, LogOut, Loader2, CheckCircle2, Clock, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
-import { LandingPage } from './pages/LandingPage';
+import { LandingPage } from "./pages/LandingPage";
 import type { User } from '@supabase/supabase-js';
 
 interface VideoClip {
@@ -111,7 +111,7 @@ return (
       const response = await fetch('/api/youtube-video-script-processor', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${session?.access_token}`,
           'Content-Type': 'application/json'
         }
       });
