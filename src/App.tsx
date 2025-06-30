@@ -121,7 +121,7 @@ const response = await fetch('/api/youtube-video-script-processor', {
   headers: {
     'Authorization': `Bearer ${session?.access_token}`,
     'Content-Type': 'application/json',
-  },
+  };
 });
 
 if (!response.ok) {
