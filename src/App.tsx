@@ -108,37 +108,42 @@ return (
       }
 
       // Updated URL to match the deployed Edge Function name (yes, really)
-      const response = await fetch('/api/youtube-video-script-processor', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Authentication failed. Please sign in again.');
-        }
-        const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      }
-
-     const data = await response.json();
-
-```
-
-if (data.video) {
-await fetchVideos();
+     if (!session?.access_token) {
+  throw new Error('No access token available');
 }
 
-```
-    } catch (err: any) {
-      console.error('Error processing videos:', err.message);
-      if (err.message.includes('Authentication failed')) {
-        supabase.auth.signOut();
-      }
-    }
+console.log('Session:', session); // Debugging log
+console.log('Access Token:', session?.access_token); // Debugging log
+
+// Updated URL to match the deployed Edge Function name
+const response = await fetch('/api/youtube-video-script-processor', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${session?.access_token}`,
+    'Content-Type': 'application/json',
+  },
+});
+
+if (!response.ok) {
+  if (response.status === 401) {
+    throw new Error('Authentication failed. Please sign in again.');
+  }
+  const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+  throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+}
+
+const data = await response.json();
+
+if (data.video) {
+  await fetchVideos();
+}
+
+} catch (err: any) {
+  console.error('Error processing videos:', err?.message || err);
+  if (err?.message?.includes('Authentication failed')) {
+    supabase.auth.signOut();
+  }
+}
   }, 10000);
 
   return () => {
