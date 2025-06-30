@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Video, Wand2, FileVideo, ScrollText, LogOut, Loader2, CheckCircle2, Clock, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
-import { LandingPage } from "./pages/LandingPage";
+import { LandingPage } from './pages/LandingPage';
 import type { User } from '@supabase/supabase-js';
 
 interface VideoClip {
