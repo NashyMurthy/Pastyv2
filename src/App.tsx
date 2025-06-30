@@ -60,41 +60,20 @@ return () => subscription.unsubscribe();
 
 
 useEffect(() => {
-if (user) {
-fetchVideos();
-const subscription = supabase
-.channel('videos')
-.on('postgres_changes', {
-event: '*',
-schema: 'public',
-table: 'videos',
-filter: `user_id=eq.${user.id}`
-}, () => {
-fetchVideos();
-})
-.subscribe();
+  if (!user) return;
 
-return () => subscription.unsubscribe();
-}
-}, [user]);
+  const subscription = supabase
+    .channel('videos')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'videos',
+      filter: `user_id=eq.${user.id}`,
+    }, () => {
+      fetchVideos();
+    })
+    .subscribe();
 
-return (
-<Router>
-  <Routes>
-    {/* Landing Page as the default route */}
-    <Route path="/" element={<LandingPage />} />
-
-    {/* Authentication Page */}
-    <Route path="/auth" element={<Auth />} />
-
-    {/* Example: Add other routes here if needed */}
-    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-  </Routes>
-</Router>
-);
-}
-
-```
   const processingInterval = setInterval(async () => {
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -107,57 +86,60 @@ return (
         throw new Error('No access token available');
       }
 
-      // Updated URL to match the deployed Edge Function name (yes, really)
-     if (!session?.access_token) {
-  throw new Error('No access token available');
-}
+      console.log('Session:', session);
+      console.log('Access Token:', session?.access_token);
 
-console.log('Session:', session); // Debugging log
-console.log('Access Token:', session?.access_token); // Debugging log
+      const response = await fetch('/api/youtube-video-script-processor', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-// Updated URL to match the deployed Edge Function name
-const response = await fetch('/api/youtube-video-script-processor', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${session?.access_token}`,
-    'Content-Type': 'application/json',
-  };
-});
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please sign in again.');
+        }
+        const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
 
-if (!response.ok) {
-  if (response.status === 401) {
-    throw new Error('Authentication failed. Please sign in again.');
-  }
-  const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
-  throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-}
+      const data = await response.json();
 
-const data = await response.json();
+      if (data.video) {
+        await fetchVideos();
+      }
 
-if (data.video) {
-  await fetchVideos();
-}
-
-} catch (err: any) {
-  console.error('Error processing videos:', err?.message || err);
-  if (err?.message?.includes('Authentication failed')) {
-    supabase.auth.signOut();
-  }
-}
+    } catch (err: any) {
+      console.error('Error processing videos:', err?.message || err);
+      if (err?.message?.includes('Authentication failed')) {
+        supabase.auth.signOut();
+      }
+    }
   }, 10000);
 
   return () => {
     subscription.unsubscribe();
     clearInterval(processingInterval);
   };
-}
-
-```
-
 }, [user]);
 
-useEffect(() => {
-const progressIntervals: { [key: string]: ReturnType<typeof setInterval> } = {};
+return (
+  <Router>
+    <Routes>
+      {/* Landing Page as the default route */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Authentication Page */}
+      <Route path="/auth" element={<Auth />} />
+
+      {/* Example: Add other routes here if needed */}
+      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+    </Routes>
+  </Router>
+);
+}
 
 ```
 videos.forEach(video => {
