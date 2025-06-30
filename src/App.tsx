@@ -16,7 +16,7 @@ import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
 import { LandingPage } from './components/landing/LandingPage';
 import type { User } from '@supabase/supabase-js';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 interface VideoClip {
   id: string;
@@ -220,10 +220,16 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage onStart={onStart} />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/auth"
+          element={
+            !user ? <Auth /> : <Navigate to="/" />
+          }
+        />
+        {/* You can add more routes like /dashboard or /app here if needed */}
       </Routes>
     </Router>
-  ); 
-}
+  );
+  
 
 export default App;
