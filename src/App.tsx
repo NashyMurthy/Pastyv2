@@ -222,11 +222,26 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/"
+          element={
+            !authChecked ? (
+              <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-8 h-8 animate-spin" />
+              </div>
+            ) : !user && !hasClickedGetStarted ? (
+              <LandingPage onStart={onStart} />
+            ) : !user && hasClickedGetStarted ? (
+              <Auth />
+            ) : (
+              <LandingPage /> // or your main logged-in homepage later
+            )
+          }
+        />
         <Route path="/auth" element={<Auth />} />
       </Routes>
     </Router>
   );
-}
+  
 
 export default App;
