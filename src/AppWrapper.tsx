@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';  // Assuming you're using Supabase for authentication
 import { LandingPage } from './components/landing/LandingPage';  // Your Landing Page component
-import { Auth } from './components/Auth';  // Your Auth page (for Login/Signup)
+import { Auth } from './pages/Auth';  // Your Auth page (for Login/Signup)
 import App from './App';  // Your main App component for logged-in users
 
 function AppWrapper() {
