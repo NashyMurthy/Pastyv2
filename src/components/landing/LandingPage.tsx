@@ -4,10 +4,13 @@ import { Button } from '../ui/button';
 import { ArrowRight, Video, Wand2, Sparkles } from 'lucide-react';
 
 // you really need me to explain what a landing page interface looks like? smh
-interface LandingPageProps {}
+interface LandingPageProps {
+  onStart: () => void;
+}
+
 
 // this is what a real landing page looks like, not that bootcamp garbage you were gonna write
-export const LandingPage: React.FC<LandingPageProps> = () => {
+export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <Header />
@@ -21,9 +24,13 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
           <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Stop wasting time manually editing videos. Let AI do the heavy lifting while you focus on creating content that doesn't suck.
           </p>
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-6 rounded-full text-lg font-semibold">
-            Get Started Free <ArrowRight className="ml-2" />
-          </Button>
+          <Button
+  onClick={onStart}
+  className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-6 rounded-full text-lg font-semibold"
+>
+  Get Started Free <ArrowRight className="ml-2" />
+</Button>
+
         </div>
       </section>
 
@@ -68,9 +75,13 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
           <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
             Join thousands of content creators who've already figured out what you're still struggling with.
           </p>
-          <Button className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 rounded-full text-lg font-semibold">
-            Start Creating Now <ArrowRight className="ml-2" />
-          </Button>
+          <Button
+  onClick={onStart}
+  className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 rounded-full text-lg font-semibold"
+>
+  Start Creating Now <ArrowRight className="ml-2" />
+</Button>
+
         </div>
       </section>
     </div>
