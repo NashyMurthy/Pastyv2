@@ -38,11 +38,9 @@ interface VideoItem {
   created_at: string;
 }
 
-interface AppProps {
-  user: User;
-}
-
-function App({ user }: AppProps) {
+function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
   const [videoUrl, setVideoUrl] = useState('');
   const [activeTab, setActiveTab] = useState('create');
   const [loading, setLoading] = useState(false);
@@ -53,6 +51,23 @@ function App({ user }: AppProps) {
   const [hasClickedGetStarted, setHasClickedGetStarted] = useState(
     localStorage.getItem('hasClickedGetStarted') === 'true'
   );
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+      setLoadingUser(false);
+    };
+    getUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -196,18 +211,56 @@ function App({ user }: AppProps) {
 
   const handleSignOut = () => {
     supabase.auth.signOut();
+    localStorage.removeItem('hasClickedGetStarted');
+    setHasClickedGetStarted(false);
   };
 
+  if (loadingUser) {
+    return <div className="p-8 text-white">Loading...</div>;
+  }
+
+  if (!hasClickedGetStarted) {
+    return <LandingPage onStart={onStart} />;
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
+
   return (
-    <div className="p-8 text-white">
-      <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
-      <p>This is your main app area.</p>
-      <button
-        onClick={handleSignOut}
-        className="mt-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700"
-      >
-        Sign Out
-      </button>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 via-fuchsia-500 to-pink-600 text-transparent bg-clip-text">
+          Welcome, {user.email}
+        </h1>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+        >
+          <LogOut size={18} /> Sign Out
+        </button>
+      </div>
+
+      <div className="max-w-xl mx-auto bg-[#1c1c2b] p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-pink-400">Transform Your Content</h2>
+        <input
+          className="w-full p-3 rounded bg-gray-900 text-white placeholder-gray-400 mb-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          type="text"
+          placeholder="Paste YouTube Short URL here"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+        />
+        <button
+          onClick={handleGenerate}
+          className="w-full py-2 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-pink-600 hover:brightness-110 rounded text-white font-medium transition"
+          disabled={loading}
+        >
+          {loading ? 'Generating...' : 'Generate'}
+        </button>
+
+        {error && <p className="mt-3 text-red-400">{error}</p>}
+        {success && <p className="mt-3 text-green-400">{success}</p>}
+      </div>
     </div>
   );
 }

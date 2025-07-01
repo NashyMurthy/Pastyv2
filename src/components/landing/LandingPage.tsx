@@ -8,7 +8,6 @@ interface LandingPageProps {
   onStart: () => void;
 }
 
-
 // this is what a real landing page looks like, not that bootcamp garbage you were gonna write
 export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
   return (
@@ -25,12 +24,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             Stop wasting time manually editing videos. Let AI do the heavy lifting while you focus on creating content that doesn't suck.
           </p>
           <Button
-  onClick={onStart}
-  className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-6 rounded-full text-lg font-semibold"
->
-  Get Started Free <ArrowRight className="ml-2" />
-</Button>
-
+            onClick={onStart}
+            className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-8 py-6 rounded-full text-lg font-semibold"
+          >
+            Get Started Free <ArrowRight className="ml-2" />
+          </Button>
         </div>
       </section>
 
@@ -76,14 +74,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             Join thousands of content creators who've already figured out what you're still struggling with.
           </p>
           <Button
-  onClick={onStart}
-  className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 rounded-full text-lg font-semibold"
->
-  Start Creating Now <ArrowRight className="ml-2" />
-</Button>
-
+            onClick={onStart}
+            className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 rounded-full text-lg font-semibold"
+          >
+            Start Creating Now <ArrowRight className="ml-2" />
+          </Button>
         </div>
       </section>
     </div>
   );
-}; 
+};
