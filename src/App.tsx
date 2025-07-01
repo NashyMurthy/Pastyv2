@@ -54,22 +54,23 @@ function App({ user }: AppProps) {
     localStorage.getItem('hasClickedGetStarted') === 'true'
   );
 
-    return () => subscription.unsubscribe();
-  }, []);
-
   useEffect(() => {
     if (!user) return;
 
     const subscription = supabase
       .channel('videos')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'videos',
-        filter: `user_id=eq.${user.id}`,
-      }, () => {
-        fetchVideos();
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'videos',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchVideos();
+        }
+      )
       .subscribe();
 
     const processingInterval = setInterval(async () => {
@@ -81,7 +82,7 @@ function App({ user }: AppProps) {
         const response = await fetch('/api/youtube-video-script-processor', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${session.access_token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -93,7 +94,6 @@ function App({ user }: AppProps) {
 
         const data = await response.json();
         if (data.video) await fetchVideos();
-
       } catch (err: any) {
         console.error('Error processing videos:', err?.message || err);
         if (err?.message?.includes('Authentication failed')) {
@@ -198,18 +198,18 @@ function App({ user }: AppProps) {
     supabase.auth.signOut();
   };
 
-return (
-  <div className="p-8 text-white">
-    <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
-    <p>This is your main app area.</p>
-    <button
-      onClick={handleSignOut}
-      className="mt-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700"
-    >
-      Sign Out
-    </button>
-  </div>
-);
+  return (
+    <div className="p-8 text-white">
+      <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
+      <p>This is your main app area.</p>
+      <button
+        onClick={handleSignOut}
+        className="mt-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700"
+      >
+        Sign Out
+      </button>
+    </div>
+  );
 }
 
 export default App;
