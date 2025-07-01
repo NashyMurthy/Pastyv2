@@ -135,7 +135,7 @@ function App({ user }: AppProps) {
   const fetchVideos = async () => {
     try {
       const { data: videos, error: videosError } = await supabase
-        .from('videos')
+        .from('videos') 
         .select('*')
         .order('created_at', { ascending: false });
       if (videosError) throw videosError;
