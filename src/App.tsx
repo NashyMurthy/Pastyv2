@@ -16,7 +16,6 @@ import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
 import { LandingPage } from './components/landing/LandingPage';
 import type { User } from '@supabase/supabase-js';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 interface VideoClip {
   id: string;
@@ -39,8 +38,11 @@ interface VideoItem {
   created_at: string;
 }
 
-function App() {
-  const [user, setUser] = useState<User | null>(null);
+interface AppProps {
+  user: User;
+}
+
+function App({ user }: AppProps) {
   const [videoUrl, setVideoUrl] = useState('');
   const [activeTab, setActiveTab] = useState('create');
   const [loading, setLoading] = useState(false);
@@ -51,18 +53,6 @@ function App() {
   const [hasClickedGetStarted, setHasClickedGetStarted] = useState(
     localStorage.getItem('hasClickedGetStarted') === 'true'
   );
-  const [authChecked, setAuthChecked] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setAuthChecked(true);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setAuthChecked(true);
-    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -208,29 +198,18 @@ function App() {
     supabase.auth.signOut();
   };
 
-  if (!authChecked) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage onStart={onStart} />} />
-        <Route
-          path="/auth"
-          element={
-            !user ? <Auth /> : <Navigate to="/" />
-          }
-        />
-        {/* You can add more routes like /dashboard or /app here if needed */}
-      </Routes>
-    </Router>
-  );
+return (
+  <div className="p-8 text-white">
+    <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
+    <p>This is your main app area.</p>
+    <button
+      onClick={handleSignOut}
+      className="mt-4 px-4 py-2 bg-red-600 rounded hover:bg-red-700"
+    >
+      Sign Out
+    </button>
+  </div>
+);
 }
-  
 
 export default App;
