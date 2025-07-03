@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
-import { LandingPage } from './components/landing/LandingPage';
+import { LandingPage } from './pages/LandingPage';
 import { Auth } from './pages/Auth';
 import App from './App';
 import { Loader2 } from 'lucide-react';

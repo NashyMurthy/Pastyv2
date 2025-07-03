@@ -218,7 +218,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // handle your janky CORS
   if (req.method === 'OPTIONS') {
     console.log('👋 CORS preflight request');
-    return res.status(200).set(corsHeaders).send('ok');
+    res.status(200);
+Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
+return res.send('ok');
   }
 
   try {

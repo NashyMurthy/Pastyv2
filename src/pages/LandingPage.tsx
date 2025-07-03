@@ -1,6 +1,6 @@
 import React from 'react';
-import { Header } from './Header';
-import { Button } from '../ui/button';
+import { Header } from '../components/landing/Header';
+import { Button } from '../components/ui/button';
 import { ArrowRight, Video, Wand2, Sparkles } from 'lucide-react';
 
 // you really need me to explain what a landing page interface looks like? smh

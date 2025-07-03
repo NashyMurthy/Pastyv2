@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
-import { LandingPage } from './components/landing/LandingPage';
+import { LandingPage } from './pages/LandingPage';
 import type { User } from '@supabase/supabase-js';
 
 interface VideoClip {

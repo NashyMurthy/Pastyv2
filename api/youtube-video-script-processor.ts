@@ -57,7 +57,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') {
     console.log('👋 CORS preflight request');
-    return res.status(200).set(corsHeaders).send('ok');
+    res.status(200);
+for (const [key, value] of Object.entries(corsHeaders)) {
+  res.setHeader(key, value);
+}
+res.send('ok');
+return;
   }
 
   try {
