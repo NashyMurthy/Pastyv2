@@ -217,12 +217,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   // handle your janky CORS
   if (req.method === 'OPTIONS') {
-    console.log('👋 CORS preflight request');
-    res.status(200);
-Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
-return res.send('ok');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.status(200).send('ok');
   }
-
+  
   try {
     console.log('🔍 Starting video processing...');
     

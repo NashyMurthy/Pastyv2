@@ -23,10 +23,9 @@ async function getVideoInfo(url: string): Promise<VideoInfo> {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) throw new Error('YouTube API key not configured');
 
-    // Get detailed video info from YouTube API
     const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${apiKey}`;
     const response = await fetch(apiUrl);
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(`YouTube API error: ${error.error?.message || 'Unknown error'}`);
@@ -57,12 +56,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'OPTIONS') {
     console.log('👋 CORS preflight request');
-    res.status(200);
-for (const [key, value] of Object.entries(corsHeaders)) {
-  res.setHeader(key, value);
-}
-res.send('ok');
-return;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.status(200).send('ok');
   }
 
   try {
@@ -184,7 +181,7 @@ return;
 
     } catch (processError: any) {
       console.error('❌ Process error:', processError);
-      
+
       console.log('🔄 Updating status to error...');
       await supabaseClient
         .from('videos')
@@ -204,4 +201,4 @@ return;
       error: error.message || 'An unexpected error occurred'
     });
   }
-} 
+}
