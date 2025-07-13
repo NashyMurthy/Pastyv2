@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import { LandingPage } from './pages/LandingPage';
 import { Auth } from './pages/Auth';
@@ -24,7 +24,7 @@ function AppWrapper() {
       setAuthChecked(true);
     });
 
-    return () => listener?.subscription?.unsubscribe();
+    return () => listener.subscription.unsubscribe();
   }, []);
 
   if (!authChecked) {
@@ -36,14 +36,10 @@ function AppWrapper() {
   }
 
   if (!user && !hasClickedGetStarted) {
-    return (
-      <LandingPage
-        onStart={() => {
-          localStorage.setItem('hasClickedGetStarted', 'true');
-          setHasClickedGetStarted(true);
-        }}
-      />
-    );
+    return <LandingPage onStart={() => {
+      localStorage.setItem('hasClickedGetStarted', 'true');
+      setHasClickedGetStarted(true);
+    }} />;
   }
 
   if (!user) {
