@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Video,
-  Wand2,
-  FileVideo,
-  ScrollText,
-  LogOut,
-  Loader2,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
 import { LandingPage } from './pages/LandingPage';
@@ -42,12 +30,12 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [videoUrl, setVideoUrl] = useState('');
-  const [activeTab, setActiveTab] = useState('create');
+  const [activeTab] = useState('create');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [videos, setVideos] = useState<VideoItem[]>([]);
-  const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+  const [expandedVideo] = useState<string | null>(null);
   const [hasClickedGetStarted, setHasClickedGetStarted] = useState(
     localStorage.getItem('hasClickedGetStarted') === 'true'
   );
@@ -60,12 +48,14 @@ function App() {
     };
     getUser();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
     });
 
     return () => {
-      listener.subscription.unsubscribe();
+      subscription?.unsubscribe?.(); // ✅ fix for build error
     };
   }, []);
 
@@ -90,7 +80,10 @@ function App() {
 
     const processingInterval = setInterval(async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
         if (sessionError) throw new Error('Failed to get session');
         if (!session?.access_token) throw new Error('No access token available');
 
@@ -150,7 +143,7 @@ function App() {
   const fetchVideos = async () => {
     try {
       const { data: videos, error: videosError } = await supabase
-        .from('videos') 
+        .from('videos')
         .select('*')
         .order('created_at', { ascending: false });
       if (videosError) throw videosError;
