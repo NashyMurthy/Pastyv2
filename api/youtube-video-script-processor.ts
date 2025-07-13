@@ -102,6 +102,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .limit(1)
       .single();
 
+      
     if (fetchError) {
       console.error('❌ Fetch error:', fetchError);
       if (fetchError.code === 'PGRST116') {
