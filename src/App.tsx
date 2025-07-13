@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { LogOut } from 'lucide-react';
+// ✅ App.tsx (FINAL VERSION after removing unused imports and fixing TS errors)
+
+import { useEffect, useState } from 'react';
+import {
+  LogOut,
+} from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
 import { LandingPage } from './pages/LandingPage';
@@ -40,8 +44,8 @@ function App() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
+      const { data: userData } = await supabase.auth.getUser();
+      setUser(userData.user);
       setLoadingUser(false);
     };
     getUser();
@@ -170,11 +174,9 @@ function App() {
     if (!validateYouTubeUrl(videoUrl)) return setError('Please enter a valid YouTube Short URL');
     setLoading(true);
     try {
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('videos')
-        .insert([{ user_id: user?.id, youtube_url: videoUrl.trim(), status: 'pending' }])
-        .select()
-        .single();
+        .insert([{ user_id: user?.id, youtube_url: videoUrl.trim(), status: 'pending' }]);
       if (insertError) throw insertError;
       setSuccess('Video added successfully! Processing will begin shortly.');
       setVideoUrl('');
