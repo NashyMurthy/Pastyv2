@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Video,
-  Wand2,
-  FileVideo,
-  ScrollText,
-  LogOut,
-  Loader2,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { Auth } from './pages/Auth';
 import { LandingPage } from './pages/LandingPage';
