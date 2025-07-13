@@ -19,13 +19,12 @@ function AppWrapper() {
       setAuthChecked(true);
     });
 
-    const { subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setAuthChecked(true);
     });
-    
 
-    return () => subscription.unsubscribe();
+    return () => listener?.subscription?.unsubscribe();
   }, []);
 
   if (!authChecked) {
@@ -37,17 +36,21 @@ function AppWrapper() {
   }
 
   if (!user && !hasClickedGetStarted) {
-    return <LandingPage onStart={() => {
-      localStorage.setItem('hasClickedGetStarted', 'true');
-      setHasClickedGetStarted(true);
-    }} />;
+    return (
+      <LandingPage
+        onStart={() => {
+          localStorage.setItem('hasClickedGetStarted', 'true');
+          setHasClickedGetStarted(true);
+        }}
+      />
+    );
   }
 
   if (!user) {
     return <Auth />;
   }
 
-  return <App />; // 🔧 FIXED: Removed `user={user}` prop
+  return <App />;
 }
 
 export default AppWrapper;

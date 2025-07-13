@@ -3,18 +3,16 @@ import { Header } from '../components/landing/Header';
 import { Button } from '../components/ui/button';
 import { ArrowRight, Video, Wand2, Sparkles } from 'lucide-react';
 
-// you really need me to explain what a landing page interface looks like? smh
 interface LandingPageProps {
   onStart: () => void;
 }
 
-// this is what a real landing page looks like, not that bootcamp garbage you were gonna write
 export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      <Header />
-      
-      {/* Hero Section - because apparently you need one spelled out for you */}
+      <Header onGetStarted={onStart} />
+
+      {/* Hero Section */}
       <section className="px-4 py-20 md:py-32 max-w-7xl mx-auto">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text">
@@ -32,7 +30,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
         </div>
       </section>
 
-      {/* Features - since you clearly need help with the basics */}
+      {/* Features Section */}
       <section className="px-4 py-20 max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
           Features that actually work (unlike your previous attempts)
@@ -64,7 +62,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
         </div>
       </section>
 
-      {/* CTA - because you need all the help you can get */}
+      {/* CTA */}
       <section className="px-4 py-20 max-w-7xl mx-auto text-center">
         <div className="bg-gradient-to-r from-purple-900 to-pink-900 p-12 rounded-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
