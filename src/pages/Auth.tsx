@@ -60,7 +60,7 @@ export function Auth() {
       const normalizedEmail = email.toLowerCase().trim();
 
       if (isSignUp) {
-        const { data, error: signUpError } = await supabase.auth.signUp({ 
+        const { error: signUpError } = await supabase.auth.signUp({ 
           email: normalizedEmail,
           password,
           options: {
